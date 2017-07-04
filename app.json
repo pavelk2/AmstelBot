@@ -1,0 +1,9 @@
+{
+  "name": "PavelChatbot",
+  "description": "Test chatbot",
+  "repository": "https://github.com/pavelk2/messenger-platform-samples",
+  "keywords": ["express", "node","chatbot"],
+  "env": {
+    "BUILDPACK_URL": "https://github.com/heroku/heroku-buildpack-nodejs.git"
+  } 
+}
