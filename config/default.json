@@ -1,6 +1,21 @@
 {
-    "appSecret": "",
-    "pageAccessToken": "",
-    "validationToken": "",
-    "serverURL": "http://localhost/"
+    "Facebook": {
+        "appSecret": "fff10bdc8656cd3f93711eedeb52847e",
+        "pageAccessToken": "EAAIvepyGxcoBAAD4IejP8ZBuVlF9tPHNLBB8fW3eKZBfofI6TL6hS1DbwsJW1ZCsyzvc3gUsTvgdW8vXhcREiIkpLLmfpXZAzfOddhuzi36xOqYCf2zTezYnxtavQCa3OiFcQQEj9d3MveYmZBJLfVXvAyhsyYDhOn8gFvISFpgZDZD",
+        "validationToken": "my_voice_is_my_token"
+    },
+    "serverURL": "https://mnourwbfnp.localtunnel.me",
+    "MONGO": "mongodb://localhost:27017",
+    "OPBEAT": {
+        "appId": "f8d2f583b3",
+        "organizationId": "e9c15d06e77e4eb4bb968f7e529e1264",
+        "secretToken": "c29824fe9c93c952c172ea19c71fda568a275a2a"
+    },
+    "FOURSQUARE":{
+        "client_ID":"PL5OSFKJVBE3P0EF1PZA5IFXM1YRREUVPYAC4TCA5P0ZSG5U",
+        "client_secret":"XIXQ3J0SASMRGBXNKG3QBX122IXUY0HM55HUJC0X1GBIYME0"
+    },
+    "GOOGLE":{
+        "api_key": "AIzaSyDL-rjy0-DY7NqquMcU54uEczOfnps19Bg"
+    }
 }
