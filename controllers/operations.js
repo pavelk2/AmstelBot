@@ -1,5 +1,5 @@
-var fluxedoAPI = require("./API/fluxedoAPI"),
-    instagramAPI = require("./API/instagramAPI");
+var instagramAPI = require("./API/instagramAPI"),
+fluxedoAPI = require("./API/fluxedoAPI");
 
 AMSTERDAM_CORNERS = {
     "TL": {
