@@ -20,6 +20,7 @@ User.prototype = {
                 firebase.getUserData(user.id, function(user_data) {
                     user.profile = user_data["profile"]
                     user.state = user_data["state"]
+                    
                     callback(user);
                 });
             } else {
@@ -33,7 +34,7 @@ User.prototype = {
                     }
                     user_data = {
                         "profile": user.profile,
-                        "state": user.state
+                        "state": user.state,
                     }
                     firebase.createUser(user.id, user_data, function() {
                         callback(user);
@@ -41,6 +42,10 @@ User.prototype = {
                 });
             }
         });
+    },
+    saveMessage: function(messageText, messageAttachments){
+        var user = this;
+        firebase.addUserMessage(user.id,messageText,messageAttachments);
     },
     saveUserInfo: function() {
         console.log("saving user data")
@@ -50,7 +55,7 @@ User.prototype = {
             "state": user.state
         }
         firebase.updateUserData(user.id, user_data, function() {
-           
+
         })
     },
     updateProfile: function(callback) {
@@ -63,17 +68,21 @@ User.prototype = {
         this.profile = profile_data;
         callback(this);
     },
-    sendSimpleMessage: function(messageText) {
+    sendSimpleMessage: function(messageText, callback) {
+        var user = this;
+        this.sendGenericMessage({
+            text: this.profile.first_name + ", " + messageText
+        }, callback);
+    },
+    sendGenericMessage: function(payload, callback) {
         var user = this;
         var messageData = {
             recipient: {
                 id: user.id
             },
-            message: {
-                text: this.profile.first_name + ", " + messageText
-            }
+            message: payload
         };
-        facebookAPI.sendMessage(messageData);
+        facebookAPI.sendMessage(messageData, callback);
     },
     getVenues: function(location, category, callback) {
         var user = this;

@@ -1,28 +1,42 @@
-var moduletitle = 'context';
+var moduletitle = 'context',
+    Operations = require('./operations');
+
+GOOGLE_STATIC_MAPS_KEY = process.env.GOOGLE_STATIC_MAPS_KEY;
 
 DIALOGUE_POSSIBLE_STATES = {
-    "place to eat": {
-        "entities": {
-            "category": {
-                "question":"What kind of place you are looking for?",
-                "type": "list",
-                "examples": ["Street food", "Italian", "Chinese"]
-            },
-            "location": {
-                "question":"Choose a location where I should search:",
-                "type": "location",
-                "examples": []
-            }
-        }
-    },
     "popular place": {
         "entities": {}
     },
     "popular pictures": {
         "entities": {}
     },
-    "give feedback": {
-        "entities": {}
+    "custom request": {
+        "entities": {
+            "request": {
+                "question": "What would you like me to do for you?",
+                "type": "string",
+                "examples": []
+            },
+            "reason": {
+                "question": "I do not know yet how to do that, but I will learn soon. Would you mind telling me, why this is important or interesting for you?",
+                "type": "string",
+                "examples": []
+            }
+        }
+    },
+    "place to eat": {
+        "entities": {
+            "category": {
+                "question": "What kind of place you are looking for?",
+                "type": "list",
+                "examples": ["Street food", "Italian", "Chinese"]
+            },
+            "location": {
+                "question": "Choose a location where I should search:",
+                "type": "location",
+                "examples": []
+            }
+        }
     }
 }
 
@@ -69,8 +83,8 @@ Context.prototype = {
     },
     setEntity: function(entity, value) {
         var context = this;
-        entity_type =  DIALOGUE_POSSIBLE_STATES[context.state.intent]["entities"][entity]["type"];
-        if ((entity_type == "location" && typeof value === "object") || (typeof value === "string" &&  entity_type != "location")){
+        entity_type = DIALOGUE_POSSIBLE_STATES[context.state.intent]["entities"][entity]["type"];
+        if ((entity_type == "location" && typeof value === "object") || (typeof value === "string" && entity_type != "location")) {
             context.state.entities[entity] = value;
             context.user.saveUserInfo();
         }
@@ -87,7 +101,7 @@ Context.prototype = {
     },
     setExpectation: function(entity) {
         var context = this;
-        console.log("expecting "+entity)
+        console.log("expecting " + entity)
         context.state.expecting = entity;
         this.user.saveUserInfo();
     },
@@ -95,21 +109,79 @@ Context.prototype = {
         var context = this;
         return context.state.expecting;
     },
-    executeOperation: function(intent,entities, callback) {
+    executeOperation: function(intent, entities, callback) {
         var context = this;
         switch (intent) {
             case "place to eat":
-                context.user.sendSimpleMessage("here are my suggestions:");
+                context.user.sendSimpleMessage("let me see, what I can find for you ...");
                 var location = entities.location;
                 var category = entities.category;
-                
+
                 context.user.getVenues(location, category, callback);
                 break;
             case "popular pictures":
-                context.user.sendSimpleMessage("The pictures are:", callback);
+                context.user.sendSimpleMessage("I am looking for recent pictures on Instagram now ...")
+                Operations.getPopularPhotos(function(popular_photos) {
+                    var elements = [];
+                    popular_photos.forEach(function(photo) {
+                        elements.push({
+                            "title": "Photo by " + photo["user"]["username"] + " (" + photo["likes"]["count"] + " likes)",
+                            "subtitle": photo["location"]["name"],
+                            "image_url": photo["images"]["standard_resolution"]["url"],
+                            "default_action": {
+                                "type": "web_url",
+                                "url": photo["link"]
+                            }
+                        });
+                    });
+                    context.user.sendGenericMessage({
+                        "attachment": {
+                            "type": "template",
+                            "payload": {
+                                "template_type": "generic",
+                                "elements": elements
+                            }
+                        }
+                    }, callback);
+                });
                 break;
             case "popular place":
-                context.user.sendSimpleMessage("The popular place is:", callback);
+                context.user.sendSimpleMessage("I am checking now on social media the place with the most number of posts during the last hour. It might take up to 20 seconds ...")
+                Operations.getPopularPlaces(function(popular_places) {
+                    var elements = [];
+                    if (popular_places.length > 0) {
+                        popular_places.forEach(function(place) {
+                            var lat = place["input"]["lat"],
+                                long = place["input"]["long"],
+                                place_image = "https://maps.googleapis.com/maps/api/staticmap?center=" + lat + "," + long + "&markers=" + lat + "," + long + "&size=764x400&zoom=13&key=" + GOOGLE_STATIC_MAPS_KEY,
+                                place_url = "https://www.google.nl/maps/@" + lat + "," + long + ",13z?hl=nl";
+                            elements.push({
+                                "title": 'Popular place',
+                                "subtitle": place['output']['total'] + ' posts',
+                                "image_url": place_image,
+                                "default_action": {
+                                    "type": "web_url",
+                                    "url": place_url
+                                }
+                            });
+                        });
+                        context.user.sendGenericMessage({
+                            "attachment": {
+                                "type": "template",
+                                "payload": {
+                                    "template_type": "generic",
+                                    "elements": elements
+                                }
+                            }
+                        }, callback);
+                    }else {
+                        context.user.sendSimpleMessage("There was some problem and I could not find any popular place. Sorry :(", callback);
+                    }
+                });
+
+                break;
+            case "custom request":
+                context.user.sendSimpleMessage("I appreciate your feedback!", callback);
                 break;
             default:
                 context.user.sendSimpleMessage("not sure what you were looking for...", callback);
@@ -118,6 +190,7 @@ Context.prototype = {
     processRequest: function(messageText, messageAttachments) {
         var context = this;
         console.log(messageText);
+        context.user.saveMessage(messageText, messageAttachments);
         if (messageText) {
             if (!(context.state.intent)) {
                 context.setIntent(messageText);
@@ -157,25 +230,28 @@ Context.prototype = {
             if (Object.keys(missing_entities).length > 0) {
                 context.requestEntities(missing_entities);
             } else {
-                context.executeOperation(context.state.intent,context.state.entities, function(){
+                context.executeOperation(context.state.intent, context.state.entities, function() {
                     context.requestIntents();
                 });
-                context.cleanState();   
+                context.cleanState();
             }
-        }else{
+        } else {
             context.requestIntents();
-        } 
-        
+        }
+
     },
     requestEntities: function(missing_entities) {
         var context = this;
         console.log(missing_entities);
         var entity = Object.keys(missing_entities)[0];
-        if (entity == "user"){
+        if (entity == "user") {
             console.log(missing_entities);
         }
         context.setExpectation(entity)
         switch (missing_entities[entity]["type"]) {
+            case "string":
+                context.user.sendSimpleMessage(missing_entities[entity]["question"]);
+                break;
             case "list":
                 context.user.sendQuickReply(missing_entities[entity]["question"], missing_entities[entity]["examples"]);
                 break;

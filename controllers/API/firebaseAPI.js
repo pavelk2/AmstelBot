@@ -12,8 +12,10 @@ firebase.initializeApp(firebase_config);
 
 
 var FBase = function() {
-    this.db = firebase.database();
+    this.fb = firebase;
+    this.db = this.fb.database();
     this.people = this.db.ref("people")
+    this.messages = this.db.ref("messages")
 }
 
 FBase.prototype = {
@@ -50,6 +52,16 @@ FBase.prototype = {
     getUserReference: function(user_id){
         var fbas = this;
         return this.people.child(user_id)
+    },
+    addUserMessage: function(user_id, messageText,messageAttachments){
+        var fbase = this;
+        var ref = fbase.messages.child(user_id);
+        message= (messageText) ? messageText :messageAttachments;
+        console.log(message);
+        ref.push({
+            "message":message,
+            dt:fbase.fb.database.ServerValue.TIMESTAMP
+        })
     }
 
 }

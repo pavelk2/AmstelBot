@@ -1,8 +1,7 @@
 var moduletitle = 'message',
     request = require('request'),
     User = require('./user'),
-    Context = require('./context'),
-    FourSquareAPI = require('./API/foursquareAPI');
+    Context = require('./context');
 
 
 module.exports = {

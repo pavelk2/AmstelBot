@@ -9,7 +9,7 @@ module.exports = {
         var api = this;
 
         if (!(callback)){
-            var callback = function(){
+            callback = function(){
                 console.log("no callback");
             }
         }
