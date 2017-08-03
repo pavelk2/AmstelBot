@@ -1,5 +1,4 @@
-var config = require('config'),
-    facebookAPI = require('./API/facebookAPI'),
+var facebookAPI = require('./API/facebookAPI'),
     foursquareAPI = require('./API/foursquareAPI'),
     Firebase = require('./API/firebaseAPI'),
     googleplacesAPI = require('./API/googleplacesAPI'),
@@ -12,7 +11,7 @@ var User = function(id) {
 }
 firebase = new Firebase()
 
-SERVER_URL = config.get("serverURL")
+SERVER_URL = process.env.serverURL
 
 User.prototype = {
     init: function(callback) {

@@ -1,9 +1,7 @@
 var express = require('express'),
   router = express.Router(),
   request = require('request'),
-  config = require('config'),
   message = require('./message');
-
 
 /*
  * Use your own validation token. Check that the token used in the Webhook 
@@ -12,7 +10,7 @@ var express = require('express'),
  */
 
 
-const FACEBOOK_VALIDATION_TOKEN = config.get("FACEBOOK_VALIDATION_TOKEN");
+const FACEBOOK_VALIDATION_TOKEN = process.env.FACEBOOK_VALIDATION_TOKEN;
 
 router.get('/', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&

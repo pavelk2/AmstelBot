@@ -1,9 +1,8 @@
 var moduletitle = 'facebookAPI',
-    request = require('request'),
-    config = require('config');
+    request = require('request');
 
 
-var FACEBOOK_ACCESS_TOKEN = config.get('FACEBOOK_ACCESS_TOKEN');
+var FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 
 module.exports = {
     sendMessage: function(messageData, callback = function(){}) {

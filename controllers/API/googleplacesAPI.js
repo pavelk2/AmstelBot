@@ -1,9 +1,8 @@
 var moduletitle = 'googleplacesAPI',
-    request = require('request'),
-    config = require('config')
+    request = require('request');
 
 
-GOOGLE_API_KEY = config.get("GOOGLE_API_KEY")
+GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 
 function NestedFunction(api, stack, cards, callback) {

@@ -1,10 +1,9 @@
 var moduletitle = 'foursquareAPI',
-    request = require('request'),
-    config = require('config')
+    request = require('request');
 
 
-FOURSQUARE_CLIENT_ID = config.get("FOURSQUARE_CLIENT_ID")
-FOURSQUARE_CLIENT_SECRET = config.get("FOURSQUARE_CLIENT_SECRET")
+FOURSQUARE_CLIENT_ID = process.env.FOURSQUARE_CLIENT_ID;
+FOURSQUARE_CLIENT_SECRET = process.env.FOURSQUARE_CLIENT_SECRET;
 
 module.exports = {
     getVenues: function(location, venue_query, callback) {

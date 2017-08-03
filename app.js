@@ -1,36 +1,36 @@
 const
   bodyParser = require('body-parser'),
-  config = require('config'),
   crypto = require('crypto'),
   express = require('express'),
   https = require('https'),
   request = require('request');
 
-var MongoClient = require('mongodb').MongoClient,
-  opbeat = require('opbeat').start({
-    "appId": config.get("OPBEAT_APP_ID"),
-    "organizationId": config.get("OPBEAT_ORGANIZATION_ID"),
-    "secretToken": config.get("OPBEAT_SECRET_TOKEN")
+var opbeat = require('opbeat').start({
+    "appId": process.env.OPBEAT_APP_ID,
+    "organizationId": process.env.OPBEAT_ORGANIZATION_ID,
+    "secretToken": process.env.OPBEAT_SECRET_TOKEN
   })
 
 
 var app = express();
+
 app.set('port', process.env.PORT || 5000);
+
 app.set('view engine', 'ejs');
 app.use(bodyParser.json({
   verify: verifyRequestSignature
 }));
+
 app.use(express.static('public'));
 app.use(opbeat.middleware.express())
 
-const SERVER_URL = config.get("serverURL"),
-FACEBOOK_APP_SECRET = config.get('FACEBOOK_APP_SECRET'),
-FACEBOOK_ACCESS_TOKEN = config.get('FACEBOOK_ACCESS_TOKEN'),
-FACEBOOK_VALIDATION_TOKEN = config.get('FACEBOOK_VALIDATION_TOKEN');
-
+const SERVER_URL = process.env.serverURL,
+FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET,
+FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN,
+FACEBOOK_VALIDATION_TOKEN = process.env.FACEBOOK_VALIDATION_TOKEN;
 
 if (!(FACEBOOK_APP_SECRET && FACEBOOK_ACCESS_TOKEN && FACEBOOK_VALIDATION_TOKEN && SERVER_URL)) {
-  console.error("Missing config values");
+  console.error("Missing environmental config values");
   process.exit(1);
 }
 

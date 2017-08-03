@@ -1,8 +1,7 @@
-var firebase = require('firebase'),
-    config = require('config');
+var firebase = require('firebase');
 
-FIREBASE_API_KEY = config.get("FIREBASE_API_KEY")
-FIREBASE_DATABASE_URL = config.get("FIREBASE_DATABASE_URL")
+FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
+FIREBASE_DATABASE_URL = process.env.FIREBASE_DATABASE_URL;
 
 var firebase_config = {
     apiKey: FIREBASE_API_KEY,
