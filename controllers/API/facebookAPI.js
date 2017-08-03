@@ -5,11 +5,17 @@ var moduletitle = 'facebookAPI',
 FACEBOOK_ACCESS_TOKEN = process.env.FACEBOOK_ACCESS_TOKEN;
 
 module.exports = {
-    sendMessage: function(messageData, callback = function(){console.log("no callback");}){
+    sendMessage: function(messageData, callback){
         var api = this;
+
+        if (!(callback)){
+            var callback = function(){
+                console.log("no callback");
+            }
+        }
         
         api.callSendAPI("me/messages", "POST", messageData, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
+            if (!error && response.statusCode === 200) {
                 var recipientId = body.recipient_id;
                 var messageId = body.message_id;
 
@@ -20,7 +26,7 @@ module.exports = {
                     console.log("Successfully called Send API for recipient %s",
                         recipientId);
                 }
-                callback();
+                return callback();
             } else {
                 console.error("Failed calling Facebook API", response.statusCode, response.statusMessage, body.error);
             }
@@ -31,13 +37,13 @@ module.exports = {
         console.log("getting profile")
         api.callSendAPI(userID+"?fields=first_name,last_name,profile_pic,locale,timezone,gender", "GET", {}, function(error, response, body){
             console.log(response.statusCode)
-            if (!error && response.statusCode == 200) {
+            if (!error && response.statusCode === 200) {
                 console.log(body);
-                callback(body);
+                return callback(body);
             } else {
                 console.error("Failed calling Facebook API", response.statusCode, response.statusMessage, body.error);
             }
-        })
+        });
     },
     callSendAPI: function(extension, requestTYPE, messageData, callback) {
         /*
