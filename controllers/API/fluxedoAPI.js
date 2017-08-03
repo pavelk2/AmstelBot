@@ -1,7 +1,7 @@
 var moduletitle = 'fluxedoAPI',
     request = require('request');
 
-FLUXEDO_SUBSCRIPTION_ID = process.env.FLUXEDO_SUBSCRIPTION_ID
+FLUXEDO_SUBSCRIPTION_ID = process.env.FLUXEDO_SUBSCRIPTION_ID;
 module.exports = {
     getPostCounter: function(lat = 52.359, long = 4.873, distance = 5000, period = 3600, callback) {
         var api = this,
