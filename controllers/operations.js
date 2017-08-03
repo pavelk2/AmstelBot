@@ -29,8 +29,6 @@ var getPlaces = function(lat_steps, long_steps, corners) {
     return places;
 }
 
-AMSTERDAM_PLACES = getPlaces(7, 7, AMSTERDAM_CORNERS);
-
 var goThroughStack = function(stack, outputs, operation, callback) {
     if (stack.length > 0) {
         var element = stack.pop()
@@ -50,10 +48,10 @@ var goThroughStack = function(stack, outputs, operation, callback) {
 
 module.exports = {
     getPopularPlaces: function(callback) {
-        var places = AMSTERDAM_PLACES;
+        var places = getPlaces(5, 5, AMSTERDAM_CORNERS);
 
         var recursiveOperation = function(place, recursive_callback) {
-            fluxedoAPI.getPostCounter(place.lat, place.long, 1000, 5 * 3600, recursive_callback);
+            fluxedoAPI.getPostCounter(place.lat, place.long, 2500, 3 * 3600, recursive_callback);
         }
         goThroughStack(places, [], recursiveOperation, function(outputs) {
             outputs = outputs.sort(compareOutputTotal);

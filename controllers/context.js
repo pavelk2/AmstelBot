@@ -27,7 +27,7 @@ DIALOGUE_POSSIBLE_STATES = {
     "place to eat": {
         "entities": {
             "category": {
-                "question": "What kind of place you are looking for?",
+                "question": "What kind of place are you looking for?",
                 "type": "list",
                 "examples": ["Street food", "Italian", "Chinese"]
             },
