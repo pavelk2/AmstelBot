@@ -1,6 +1,5 @@
-var requireStack = require('require-stack'),
-instagramAPI = requireStack("./API/instagramAPI"),
-fluxedoAPI = requireStack("./API/fluxedoAPI");
+var instagramAPI = require("./API/instagramAPI"),
+fluxedoAPI = require("./API/fluxedoAPI");
 
 AMSTERDAM_CORNERS = {
     "TL": {
