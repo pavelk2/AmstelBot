@@ -1,12 +1,14 @@
-var moduletitle = 'conversations',
-    Context = require("./context"),
+var Context = require("./context"),
     User = require("./user");
 
+
+    
 
 var Conversations = function(){
     var conversations = this;
     conversations.contexts = {}
 }
+
 
 Conversations.prototype = {
 
@@ -29,9 +31,9 @@ Conversations.prototype = {
             
         }else{
             callback(conversations.contexts[user_id]);
-        }
-        
+        }   
     }
+
 }
 
 module.exports = Conversations

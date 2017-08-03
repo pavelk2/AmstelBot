@@ -1,12 +1,12 @@
 var moduletitle = 'facebookAPI',
     request = require('request'),
-    config = require('config')
+    config = require('config');
 
 
-PAGE_ACCESS_TOKEN = config.get("Facebook")['pageAccessToken']
+var FACEBOOK_ACCESS_TOKEN = config.get('FACEBOOK_ACCESS_TOKEN');
 
 module.exports = {
-    sendMessage: function(messageData) {
+    sendMessage: function(messageData, callback = function(){}) {
         var api = this;
         
         api.callSendAPI("me/messages", "POST", messageData, function(error, response, body) {
@@ -21,6 +21,7 @@ module.exports = {
                     console.log("Successfully called Send API for recipient %s",
                         recipientId);
                 }
+                callback();
             } else {
                 console.error("Failed calling Facebook API", response.statusCode, response.statusMessage, body.error);
             }
@@ -49,7 +50,7 @@ module.exports = {
         request({
             uri: 'https://graph.facebook.com/v2.6/'+extension,
             qs: {
-                access_token: PAGE_ACCESS_TOKEN
+                access_token: FACEBOOK_ACCESS_TOKEN
             },
             method: requestTYPE,
             json: messageData

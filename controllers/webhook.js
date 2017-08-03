@@ -2,7 +2,7 @@ var express = require('express'),
   router = express.Router(),
   request = require('request'),
   config = require('config'),
-  message = require('./message')
+  message = require('./message');
 
 
 /*
@@ -12,11 +12,11 @@ var express = require('express'),
  */
 
 
-const VALIDATION_TOKEN = config.get("Facebook")["validationToken"];
+const FACEBOOK_VALIDATION_TOKEN = config.get("FACEBOOK_VALIDATION_TOKEN");
 
 router.get('/', function(req, res) {
   if (req.query['hub.mode'] === 'subscribe' &&
-    req.query['hub.verify_token'] === VALIDATION_TOKEN) {
+    req.query['hub.verify_token'] === FACEBOOK_VALIDATION_TOKEN) {
     console.log("Validating webhook");
     res.status(200).send(req.query['hub.challenge']);
   } else {

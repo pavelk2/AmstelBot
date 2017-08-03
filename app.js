@@ -7,7 +7,11 @@ const
   request = require('request');
 
 var MongoClient = require('mongodb').MongoClient,
-  opbeat = require('opbeat').start(config.get("OPBEAT"))
+  opbeat = require('opbeat').start({
+    "appId": config.get("OPBEAT_APP_ID"),
+    "organizationId": config.get("OPBEAT_ORGANIZATION_ID"),
+    "secretToken": config.get("OPBEAT_SECRET_TOKEN")
+  })
 
 
 var app = express();
@@ -19,9 +23,13 @@ app.use(bodyParser.json({
 app.use(express.static('public'));
 app.use(opbeat.middleware.express())
 
-const FACEBOOK_CREDENTIALS = config.get('Facebook'), SERVER_URL = config.get("serverURL");
+const SERVER_URL = config.get("serverURL"),
+FACEBOOK_APP_SECRET = config.get('FACEBOOK_APP_SECRET'),
+FACEBOOK_ACCESS_TOKEN = config.get('FACEBOOK_ACCESS_TOKEN'),
+FACEBOOK_VALIDATION_TOKEN = config.get('FACEBOOK_VALIDATION_TOKEN');
 
-if (!(FACEBOOK_CREDENTIALS['appSecret'] && FACEBOOK_CREDENTIALS['pageAccessToken'] && FACEBOOK_CREDENTIALS['validationToken'] && SERVER_URL)) {
+
+if (!(FACEBOOK_APP_SECRET && FACEBOOK_ACCESS_TOKEN && FACEBOOK_VALIDATION_TOKEN && SERVER_URL)) {
   console.error("Missing config values");
   process.exit(1);
 }
@@ -37,7 +45,7 @@ function verifyRequestSignature(req, res, buf) {
     var method = elements[0];
     var signatureHash = elements[1];
 
-    var expectedHash = crypto.createHmac('sha1', FACEBOOK_CREDENTIALS['appSecret'])
+    var expectedHash = crypto.createHmac('sha1', FACEBOOK_APP_SECRET)
       .update(buf)
       .digest('hex');
 

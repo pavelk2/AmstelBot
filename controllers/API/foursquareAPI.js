@@ -3,10 +3,8 @@ var moduletitle = 'foursquareAPI',
     config = require('config')
 
 
-CLIENT_ID = config.get("FOURSQUARE")['client_ID']
-CLIENT_SECRET = config.get("FOURSQUARE")['client_secret']
-
-
+FOURSQUARE_CLIENT_ID = config.get("FOURSQUARE_CLIENT_ID")
+FOURSQUARE_CLIENT_SECRET = config.get("FOURSQUARE_CLIENT_SECRET")
 
 module.exports = {
     getVenues: function(location, venue_query, callback) {
@@ -58,8 +56,8 @@ module.exports = {
         request({
             uri: uri,
             qs: {
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET
+                client_id: FOURSQUARE_CLIENT_ID,
+                client_secret: FOURSQUARE_CLIENT_SECRET
             },
             method: requestTYPE,
             json: messageData

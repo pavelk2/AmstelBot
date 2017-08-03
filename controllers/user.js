@@ -1,17 +1,60 @@
 var config = require('config'),
     facebookAPI = require('./API/facebookAPI'),
     foursquareAPI = require('./API/foursquareAPI'),
+    Firebase = require('./API/firebaseAPI'),
     googleplacesAPI = require('./API/googleplacesAPI'),
     template = require('./outputtemplate');
 
 var User = function(id) {
     this.id = id;
     this.profile = {}
+    this.state = {}
 }
+firebase = new Firebase()
 
 SERVER_URL = config.get("serverURL")
 
 User.prototype = {
+    init: function(callback) {
+        var user = this;
+        firebase.checkUser(user.id, function(exists) {
+            if (exists) {
+                firebase.getUserData(user.id, function(user_data) {
+                    user.profile = user_data["profile"]
+                    user.state = user_data["state"]
+                    callback(user);
+                });
+            } else {
+                user.updateProfile(function(updated_user) {
+                    var user = updated_user;
+                    user.state = {
+                        "intent": false,
+                        "entities": {},
+                        "results_provided": false,
+                        "expecting": false
+                    }
+                    user_data = {
+                        "profile": user.profile,
+                        "state": user.state
+                    }
+                    firebase.createUser(user.id, user_data, function() {
+                        callback(user);
+                    })
+                });
+            }
+        });
+    },
+    saveUserInfo: function() {
+        console.log("saving user data")
+        var user = this;
+        user_data = {
+            "profile": user.profile,
+            "state": user.state
+        }
+        firebase.updateUserData(user.id, user_data, function() {
+           
+        })
+    },
     updateProfile: function(callback) {
         var user = this;
         facebookAPI.getProfile(this.id, function(profile_data) {
@@ -66,8 +109,7 @@ User.prototype = {
                 };
             }
 
-            facebookAPI.sendMessage(messageData);
-            callback();
+            facebookAPI.sendMessage(messageData, callback);
         });
     },
     sendImageMessage: function() {

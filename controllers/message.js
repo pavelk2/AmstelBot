@@ -1,10 +1,9 @@
 var moduletitle = 'message',
     request = require('request'),
     User = require('./user'),
-    FourSquareAPI = require('./API/foursquareAPI'),
-    Conversations = require('./conversations')
+    Context = require('./context'),
+    FourSquareAPI = require('./API/foursquareAPI');
 
-CONVERSE = new Conversations()
 
 module.exports = {
     receivedMessage: function(event) {
@@ -29,103 +28,17 @@ module.exports = {
         var timeOfMessage = event.timestamp;
         var message = event.message;
         console.log("------------")
-        console.log(CONVERSE);
 
-        CONVERSE.getContext(senderID, function(context) {
+        var user = new User(senderID)
+        user.init(function(user) {
+            console.log("user initiated");
+            var context = new Context(user);
             console.log("Received message for user %d and page %d at %d with message:",
                 senderID, recipientID, timeOfMessage);
 
-            var isEcho = message.is_echo;
-            var messageId = message.mid;
-            var appId = message.app_id;
-            var metadata = message.metadata;
-
-            // You may get a text or attachment but not both
-            var messageText = message.text;
-            var messageAttachments = message.attachments;
-            var quickReply = message.quick_reply;
-
-            if (isEcho) {
-                // Just logging message echoes to console
-                console.log("Received echo for message %s and app %d with metadata %s",
-                    messageId, appId, metadata);
-                return context;
-            } else if (quickReply) {
-                var quickReplyPayload = quickReply.payload;
-            }
-
-            if (messageText) {
-                if (context.state.results_provided){
-                    context.cleanState()
-                }else{
-                    messagging.saveExpectedEntity(context, messageText)
-                }
-                
-            } else if (messageAttachments) {
-                messageAttachments.forEach(function(attachment) {
-                    switch (attachment.type) {
-                        case 'location':
-
-                            var title = attachment.title,
-                                url = attachment.url,
-                                lat = attachment.payload.coordinates.lat
-                            long = attachment.payload.coordinates.long
-                            context.setEntity("location", attachment.payload.coordinates);
-                            break;
-                        case 'image':
-                            context.user.sendSimpleMessage("Wow! Nice picture :)");
-                            break;
-                        case 'audio':
-                            context.user.sendSimpleMessage("Cool beats!");
-                            break;
-                        default:
-                            context.user.sendSimpleMessage("I am not sure I can process such attachment.");
-                    }
-                });
-            }
-            messagging.requestEntities(context, function(context){
-                context.cleanState();
-                return context;
-            });
-            return context;
+            context.processRequest(message.text,message.attachments);
+            context.createResponse();
         });
-        
-    },
-    requestEntities: function(context, callback) {
-        var missing_entities = context.getMissingEntities();
-        if (Object.keys(missing_entities).length > 0) {
-            var entity = Object.keys(missing_entities)[0];
-            context.setExpectation(entity)
-            switch (missing_entities[entity]["type"]) {
-                case "list":
-                    context.user.sendQuickReply("What kind of place are you looking for?", missing_entities[entity]["examples"]);
-                    break;
-                case "location":
-                    context.user.sendRequstLocation("Pick a location where you want me to suggest you places");
-                    break;
-                default:
-                    context.user.sendSimpleMessage("tell me " + entity + " of what you are looking for?");
-            }
-        } else {
-            context.user.sendSimpleMessage("here are my suggestions:");
-            var location = context.state.entities.location
-            var category = context.state.entities.category
-
-
-            context.user.getVenues(location, category, function(){
-                callback(context)
-            });
-        }
-
-    },
-    saveExpectedEntity: function(context, value) {
-        var expectation = context.getExpectataion();
-        console.log(expectation);
-        if (expectation) {
-            context.setEntity(expectation, value);
-            console.log(context.state);
-        }
-        context.setExpectation(undefined);
     },
     receivedDeliveryConfirmation: function(event) {
         /*
