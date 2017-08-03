@@ -1,8 +1,8 @@
-var template = require('./outputtemplate');
-    facebookAPI = require('./API/facebookAPI'),
+var template = require('./outputtemplate'),
     foursquareAPI = require('./API/foursquareAPI'),
-    Firebase = require('./API/firebaseAPI'),
-    googleplacesAPI = require('./API/googleplacesAPI');
+    facebookAPI = require('./API/facebookAPI'),
+    Firebase = require('API/firebaseAPI'),
+    googleplacesAPI = require('API/googleplacesAPI');
 
 var User = function(id) {
     this.id = id;
