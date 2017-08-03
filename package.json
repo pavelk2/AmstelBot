@@ -24,6 +24,6 @@
     "require-stack": "^1.0.2"
   },
   "engines": {
-    "node": "4.1.2"
+    "node": "7.4.0"
   }
 }
