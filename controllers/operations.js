@@ -1,4 +1,4 @@
-var instagramAPI = require("./API/instagramAPI"),
+const instagramAPI = require("./API/instagramAPI"),
 fluxedoAPI = require("./API/fluxedoAPI");
 
 AMSTERDAM_CORNERS = {

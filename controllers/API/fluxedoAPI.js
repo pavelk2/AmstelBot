@@ -1,4 +1,4 @@
-var moduletitle = 'fluxedoAPI',
+const moduletitle = 'fluxedoAPI',
     request = require('request');
 
 FLUXEDO_SUBSCRIPTION_ID = process.env.FLUXEDO_SUBSCRIPTION_ID;
