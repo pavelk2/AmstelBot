@@ -189,7 +189,7 @@ Context.prototype = {
     },
     sendIntro: function(callback) {
         var context = this;
-        context.user.sendSimpleMessage("Hi "context.user.profile.first_name,"!👋 We are researchers from Delft University of Technology 🇳🇱, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🏳️‍🌈.", function() {
+        context.user.sendSimpleMessage("Hi "+context.user.profile.first_name+"!👋 We are researchers from Delft University of Technology 🇳🇱, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🏳️‍🌈.", function() {
             context.user.sendGenericMessage({
                 "attachment": {
                     "type": "image",
