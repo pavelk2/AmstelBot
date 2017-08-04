@@ -71,7 +71,7 @@ User.prototype = {
     sendSimpleMessage: function(messageText, callback) {
         var user = this;
         this.sendGenericMessage({
-            text: this.profile.first_name + ", " + messageText
+            text: messageText
         }, callback);
     },
     sendGenericMessage: function(payload, callback) {

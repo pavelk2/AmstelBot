@@ -113,7 +113,7 @@ Context.prototype = {
         var context = this;
         switch (intent) {
             case "place to eat":
-                context.user.sendSimpleMessage("let me see, what I can find for you ...");
+                context.user.sendSimpleMessage("let me see, what I can find for you 🔍...");
                 var location = entities.location;
                 var category = entities.category;
 
@@ -146,7 +146,7 @@ Context.prototype = {
                 });
                 break;
             case "popular place":
-                context.user.sendSimpleMessage("I am checking now on social media the place with the most number of posts during the last hour. It might take up to 20 seconds ...")
+                context.user.sendSimpleMessage("I am checking now on social media the place with the most number of posts during the last hour. It might take up to 20 seconds ⏰ ...")
                 Operations.getPopularPlaces(function(popular_places) {
                     var elements = [];
                     if (popular_places.length > 0) {
@@ -175,21 +175,21 @@ Context.prototype = {
                             }
                         }, callback);
                     } else {
-                        context.user.sendSimpleMessage("There was some problem and I could not find any popular place. Sorry :(", callback);
+                        context.user.sendSimpleMessage("😳 There was some problem and I could not find any popular place. Sorry 🤷", callback);
                     }
                 });
 
                 break;
             case "custom request":
-                context.user.sendSimpleMessage("I appreciate your feedback!", callback);
+                context.user.sendSimpleMessage("I appreciate your feedback! 🖖", callback);
                 break;
             default:
-                context.user.sendSimpleMessage("not sure what you were looking for...", callback);
+                context.user.sendSimpleMessage(context.user.profile.first_name, " I am not sure what you were looking for 🤔", callback);
         }
     },
     sendIntro: function(callback) {
         var context = this;
-        context.user.sendSimpleMessage("We are researchers from Delft Technical University, working on a chatbot aiming to serve people at city-scale events, such as PRIDE.", function() {
+        context.user.sendSimpleMessage("Hi "context.user.profile.first_name,"!👋 We are researchers from Delft University of Technology 🇳🇱, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🏳️‍🌈.", function() {
             context.user.sendGenericMessage({
                 "attachment": {
                     "type": "image",
@@ -198,7 +198,7 @@ Context.prototype = {
                     }
                 }
             }, function() {
-                context.user.sendSimpleMessage("We want to learn from you what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
+                context.user.sendSimpleMessage("We want to learn from you 👂 what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
             });
         });
     },
