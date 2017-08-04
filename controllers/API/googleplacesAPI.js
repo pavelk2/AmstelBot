@@ -4,7 +4,6 @@ var moduletitle = 'googleplacesAPI',
 
 GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
-
 function NestedFunction(api, stack, cards, callback) {
     if (stack.length > 0) {
         var place = stack.pop()
@@ -24,7 +23,6 @@ function NestedFunction(api, stack, cards, callback) {
         console.log(cards);
         callback(cards);
     }
-
 }
 
 module.exports = {

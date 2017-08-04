@@ -198,7 +198,7 @@ Context.prototype = {
                     }
                 }
             }, function() {
-                context.user.sendSimpleMessage("We want to learn from you 👂 what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
+                context.user.sendSimpleMessage("We want to learn from you what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
             });
         });
     },
