@@ -35,8 +35,41 @@ module.exports = {
             console.log("Received message for user %d and page %d at %d with message:",
                 senderID, recipientID, timeOfMessage);
 
-            context.processRequest(message.text,message.attachments);
-            context.createResponse();
+            context.processRequest(message.text, message.attachments, function() {
+                context.createResponse();
+            });
+
+        });
+    },
+    receivedPostback: function(event) {
+        /*
+         * Postback Event
+         *
+         * This event is called when a postback is tapped on a Structured Message. 
+         * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
+         * 
+         */
+        var senderID = event.sender.id;
+        var recipientID = event.recipient.id;
+        var timeOfPostback = event.timestamp;
+
+        // The 'payload' param is a developer-defined field which is set in a postback 
+        // button for Structured Messages. 
+        var payload = event.postback.payload;
+
+        console.log("Received postback for user %d and page %d with payload '%s' " +
+            "at %d", senderID, recipientID, payload, timeOfPostback);
+
+        // When a postback is called, we'll send a message back to the sender to 
+        // let them know it was successful
+        var user = new User(senderID)
+        user.init(function(user) {
+            console.log("user initiated");
+            var context = new Context(user);
+            console.log(payload)
+            context.processRequest(undefined, [payload], function() {
+                context.createResponse();
+            });
         });
     },
     receivedDeliveryConfirmation: function(event) {
@@ -63,29 +96,7 @@ module.exports = {
 
         console.log("All message before %d were delivered.", watermark);
     },
-    receivedPostback: function(event) {
-        /*
-         * Postback Event
-         *
-         * This event is called when a postback is tapped on a Structured Message. 
-         * https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
-         * 
-         */
-        var senderID = event.sender.id;
-        var recipientID = event.recipient.id;
-        var timeOfPostback = event.timestamp;
 
-        // The 'payload' param is a developer-defined field which is set in a postback 
-        // button for Structured Messages. 
-        var payload = event.postback.payload;
-
-        console.log("Received postback for user %d and page %d with payload '%s' " +
-            "at %d", senderID, recipientID, payload, timeOfPostback);
-
-        // When a postback is called, we'll send a message back to the sender to 
-        // let them know it was successful
-        sendTextMessage(senderID, "Postback called");
-    },
     receivedMessageRead: function(event) {
         /*
          * Message Read Event

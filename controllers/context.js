@@ -4,16 +4,10 @@ var moduletitle = 'context',
 GOOGLE_STATIC_MAPS_KEY = process.env.GOOGLE_STATIC_MAPS_KEY;
 
 DIALOGUE_POSSIBLE_STATES = {
-    "popular place": {
-        "entities": {}
-    },
-    "popular pictures": {
-        "entities": {}
-    },
     "custom request": {
         "entities": {
             "request": {
-                "question": "What would you like me to do for you?",
+                "question": "What would you like?",
                 "type": "string",
                 "examples": []
             },
@@ -23,6 +17,12 @@ DIALOGUE_POSSIBLE_STATES = {
                 "examples": []
             }
         }
+    },
+    "popular place": {
+        "entities": {}
+    },
+    "popular pictures": {
+        "entities": {}
     },
     "place to eat": {
         "entities": {
@@ -174,7 +174,7 @@ Context.prototype = {
                                 }
                             }
                         }, callback);
-                    }else {
+                    } else {
                         context.user.sendSimpleMessage("There was some problem and I could not find any popular place. Sorry :(", callback);
                     }
                 });
@@ -187,7 +187,22 @@ Context.prototype = {
                 context.user.sendSimpleMessage("not sure what you were looking for...", callback);
         }
     },
-    processRequest: function(messageText, messageAttachments) {
+    sendIntro: function(callback) {
+        var context = this;
+        context.user.sendSimpleMessage("We are researchers from Delft Technical University, working on a chatbot aiming to serve people at city-scale events, such as PRIDE.", function() {
+            context.user.sendGenericMessage({
+                "attachment": {
+                    "type": "image",
+                    "payload": {
+                        "url": "https://habrastorage.org/web/76f/6c8/395/76f6c83952d6496d903e019c6d25577c.png"
+                    }
+                }
+            }, function() {
+                context.user.sendSimpleMessage("We want to learn from you what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
+            });
+        });
+    },
+    processRequest: function(messageText, messageAttachments, callback) {
         var context = this;
         console.log(messageText);
         context.user.saveMessage(messageText, messageAttachments);
@@ -201,26 +216,34 @@ Context.prototype = {
                 }
                 context.setExpectation(false);
             }
+            callback();
         } else if (messageAttachments) {
-            messageAttachments.forEach(function(attachment) {
-                switch (attachment.type) {
-                    case 'location':
-                        var title = attachment.title,
-                            url = attachment.url,
-                            lat = attachment.payload.coordinates.lat
-                        long = attachment.payload.coordinates.long
-                        context.setEntity("location", attachment.payload.coordinates);
-                        break;
-                    case 'image':
-                        context.user.sendSimpleMessage("Wow! Nice picture :)");
-                        break;
-                    case 'audio':
-                        context.user.sendSimpleMessage("Cool beats!");
-                        break;
-                    default:
-                        context.user.sendSimpleMessage("I am not sure I can process such attachment.");
-                }
-            });
+            if (messageAttachments[0] == "GET_STARTED_PAYLOAD"){
+                context.sendIntro(callback);
+            } else {
+                callback();
+                messageAttachments.forEach(function(attachment) {
+
+                    switch (attachment.type) {
+                        case 'location':
+                            var title = attachment.title,
+                                url = attachment.url,
+                                lat = attachment.payload.coordinates.lat
+                            long = attachment.payload.coordinates.long
+                            context.setEntity("location", attachment.payload.coordinates);
+                            break;
+                        case 'image':
+                            context.user.sendSimpleMessage("Wow! Nice picture :)");
+                            break;
+                        case 'audio':
+                            context.user.sendSimpleMessage("Cool beats!");
+                            break;
+                        default:
+                            context.user.sendSimpleMessage("I am not sure I can process such attachment.");
+                    }
+
+                });
+            }
         }
     },
     createResponse: function() {

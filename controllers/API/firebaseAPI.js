@@ -2,6 +2,7 @@ var firebase = require('firebase');
 
 FIREBASE_API_KEY = process.env.FIREBASE_API_KEY;
 FIREBASE_DATABASE_URL = process.env.FIREBASE_DATABASE_URL;
+MODE = process.env.MODE;
 
 var firebase_config = {
     apiKey: FIREBASE_API_KEY,
@@ -14,8 +15,8 @@ firebase.initializeApp(firebase_config);
 var FBase = function() {
     this.fb = firebase;
     this.db = this.fb.database();
-    this.people = this.db.ref("people")
-    this.messages = this.db.ref("messages")
+    this.people = this.db.ref(MODE+"/people")
+    this.messages = this.db.ref(MODE+"/messages")
 }
 
 FBase.prototype = {
