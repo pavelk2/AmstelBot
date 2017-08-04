@@ -189,7 +189,7 @@ Context.prototype = {
     },
     sendIntro: function(callback) {
         var context = this;
-        context.user.sendSimpleMessage("Hi "+context.user.profile.first_name+"!👋 We are researchers from Delft University of Technology 🇳🇱, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🏳️‍🌈.", function() {
+        context.user.sendSimpleMessage("Hi "+context.user.profile.first_name+"! We are researchers from Delft University of Technology, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🌈.", function() {
             context.user.sendGenericMessage({
                 "attachment": {
                     "type": "image",
@@ -221,9 +221,8 @@ Context.prototype = {
             if (messageAttachments[0] == "GET_STARTED_PAYLOAD"){
                 context.sendIntro(callback);
             } else {
-                callback();
+                
                 messageAttachments.forEach(function(attachment) {
-
                     switch (attachment.type) {
                         case 'location':
                             var title = attachment.title,
@@ -243,6 +242,7 @@ Context.prototype = {
                     }
 
                 });
+                callback();
             }
         }
     },
