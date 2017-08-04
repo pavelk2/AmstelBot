@@ -4,7 +4,7 @@ var moduletitle = 'context',
 GOOGLE_STATIC_MAPS_KEY = process.env.GOOGLE_STATIC_MAPS_KEY;
 
 DIALOGUE_POSSIBLE_STATES = {
-    "custom request": {
+    "your questions": {
         "entities": {
             "request": {
                 "question": "What would you like?",
@@ -180,7 +180,7 @@ Context.prototype = {
                 });
 
                 break;
-            case "custom request":
+            case "your questions":
                 context.user.sendSimpleMessage("I appreciate your feedback! 🖖", callback);
                 break;
             default:
@@ -189,7 +189,7 @@ Context.prototype = {
     },
     sendIntro: function(callback) {
         var context = this;
-        context.user.sendSimpleMessage("Hi "+context.user.profile.first_name+"! We are researchers from Delft University of Technology, working on a chatbot aiming to serve people at city-scale events, such as PRIDE 🌈.", function() {
+        context.user.sendSimpleMessage("Hi "+context.user.profile.first_name+"! I am Amsterdam Chatbot, and i want to help you getting the best of a Amsterdam events, such as the PRIDE 🌈.", function() {
             context.user.sendGenericMessage({
                 "attachment": {
                     "type": "image",
@@ -198,7 +198,7 @@ Context.prototype = {
                     }
                 }
             }, function() {
-                context.user.sendSimpleMessage("We want to learn from you what kind of information you would be interested in getting from such chatbot. You can express that by clicking 'custom request'.", callback);
+                context.user.sendSimpleMessage("Ask me a question by clicking 'your questions'. I still have to learn a lot, so I might not be able to answer, but you will help me becoming better and better. Check out my other abilities too!", callback);
             });
         });
     },
